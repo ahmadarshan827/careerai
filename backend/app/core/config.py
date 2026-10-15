@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     database_url: str
     secret_key: str
     gemini_api_key: str
+    access_token_expire_minutes: int = 60
 
     model_config = SettingsConfigDict(
         env_file=REPOSITORY_ROOT / ".env",
