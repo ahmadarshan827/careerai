@@ -9,6 +9,8 @@ from app.db.session import get_db
 from app.models import Resume, User
 from app.schemas.resume import ResumeDetail, ResumeRead
 from app.services.pdf_service import PDFExtractionError, extract_text
+from app.services.llm_service import LLMBusyError, LLMError
+from app.services.resume_analysis import analyze_resume_text
 
 router = APIRouter(prefix="/resumes", tags=["resumes"])
 
@@ -71,6 +73,29 @@ def get_resume(
     current_user: User = Depends(get_current_user),
 ):
     return _get_owned_resume(db, resume_id, current_user)
+
+@router.post("/{resume_id}/analyze", response_model=ResumeDetail)
+def analyze_resume(
+    resume_id: int,
+    force: bool = False,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    resume = _get_owned_resume(db, resume_id, current_user)
+    if resume.analysis is not None and not force:
+        return resume  # cached: no AI call, no quota used
+
+    try:
+        analysis = analyze_resume_text(resume.extracted_text)
+    except LLMBusyError as exc:
+        raise HTTPException(503, "AI service is busy. Please try again in a minute.") from exc
+    except LLMError as exc:
+        raise HTTPException(502, "AI analysis failed. Please try again.") from exc
+
+    resume.analysis = analysis.model_dump()
+    db.commit()
+    db.refresh(resume)
+    return resume
 
 
 @router.delete("/{resume_id}", status_code=status.HTTP_204_NO_CONTENT)

@@ -10,7 +10,8 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 class Settings(BaseSettings):
     database_url: str
     secret_key: str
-    gemini_api_key: str
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-2.5-flash"
     access_token_expire_minutes: int = 60
 
     model_config = SettingsConfigDict(

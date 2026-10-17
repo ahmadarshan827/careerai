@@ -2,6 +2,7 @@ from datetime import datetime
 
 from sqlalchemy import DateTime, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.dialects.postgresql import JSONB
 
 from app.db.base import Base
 
@@ -18,3 +19,4 @@ class Resume(Base):
     )
 
     user: Mapped["User"] = relationship(back_populates="resumes")
+    analysis: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
