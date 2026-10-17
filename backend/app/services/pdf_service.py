@@ -25,6 +25,7 @@ def extract_text(data: bytes) -> str:
 
     if len(text) < MIN_TEXT_LENGTH:
         raise PDFExtractionError(
-            "No readable text found. Scanned or image-only PDFs are not supported yet."
+            "No selectable text found in this PDF. Export your resume as a text-based "
+            "PDF (not a scan, screenshot or image) and try again."
         )
     return text
