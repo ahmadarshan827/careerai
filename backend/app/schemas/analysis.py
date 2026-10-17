@@ -3,7 +3,8 @@ from pydantic import BaseModel
 
 class ResumeAnalysis(BaseModel):
     summary: str
-    skills: list[str]
+    technical_skills: list[str]
+    soft_skills: list[str]
     education: list[str]
     experience: list[str]
     projects: list[str]
