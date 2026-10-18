@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 
 
+
 class User(Base):
     __tablename__ = "users"
 
@@ -27,3 +28,9 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+
+    job_descriptions: Mapped[list["JobDescription"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    
