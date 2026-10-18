@@ -42,6 +42,11 @@ WEIGHTS = {
     "Resume quality": 15,
 }
 
+GENERIC_KEYWORDS = {
+    "intern", "internship", "platform", "team", "developer", "engineer",
+    "backend developer", "software engineer", "software developer",
+}
+
 
 def _strip_prefixes(s: str) -> str:
     changed = True
@@ -108,7 +113,11 @@ def compute_match(
 
     required = _check(job.get("required_skills", []), skills, text)
     preferred = _check(job.get("preferred_skills", []), skills, text)
-    keywords = _check(job.get("keywords", []), skills, text)
+    keywords = _check(
+        [k for k in job.get("keywords", []) if k.lower() not in GENERIC_KEYWORDS],
+        skills,
+        text,
+    )
 
     req_hits = sum(r["matched"] for r in required)
     pref_hits = sum(r["matched"] for r in preferred)
