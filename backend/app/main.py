@@ -9,6 +9,7 @@ from app.api.auth import router as auth_router
 from app.api.resumes import router as resumes_router
 from app.api.jobs import router as jobs_router
 from app.api.matches import router as matches_router
+from app.api.roadmaps import router as roadmaps_router
 
 
 app = FastAPI()
@@ -16,6 +17,7 @@ app.include_router(auth_router)
 app.include_router(resumes_router)
 app.include_router(jobs_router)
 app.include_router(matches_router)
+app.include_router(roadmaps_router)
 
 app.add_middleware(
     CORSMiddleware,

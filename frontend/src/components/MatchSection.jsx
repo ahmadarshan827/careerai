@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api'
+import RoadmapView from './RoadmapView'
 
 function SkillList({ title, items }) {
   if (!items?.length) return null
@@ -102,7 +103,7 @@ function MatchResult({ match }) {
           Written recommendations are unavailable right now. Run the match again to retry.
         </p>
       )}
-
+      <RoadmapView key={match.id} matchId={match.id} />
       <p className="text-xs text-slate-500">
         Estimated, project-specific scores calculated from skill and keyword overlap. They are
         not how any real applicant tracking system scores resumes.

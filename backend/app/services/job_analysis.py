@@ -13,7 +13,14 @@ SYSTEM_INSTRUCTION = (
     "not a sentence). experience_requirements, education_requirements and "
     "responsibilities may be short sentences. Use an empty list if the text says "
     "nothing about a field."
+    " required_skills and preferred_skills must be short names of skills, "
+    "technologies or tools (usually one to four words, like 'Python' or "
+    "'unit testing'). Never put duties or full sentences there: put those in "
+    "responsibilities."
 )
+
+
+MAX_SKILL_WORDS = 5
 
 
 def analyze_job_text(text: str) -> JobAnalysis:
@@ -21,4 +28,14 @@ def analyze_job_text(text: str) -> JobAnalysis:
         "Extract the requirements from this job description.\n\n"
         f"<job_description>\n{text}\n</job_description>"
     )
-    return generate_structured(prompt, JobAnalysis, SYSTEM_INSTRUCTION)
+    analysis = generate_structured(prompt, JobAnalysis, SYSTEM_INSTRUCTION)
+
+    # Guard: sentences are duties, not skills. Move them to responsibilities.
+    for field in ("required_skills", "preferred_skills"):
+        items = getattr(analysis, field)
+        setattr(analysis, field, [i for i in items if len(i.split()) <= MAX_SKILL_WORDS])
+        for i in items:
+            if len(i.split()) > MAX_SKILL_WORDS and i not in analysis.responsibilities:
+                analysis.responsibilities.append(i)
+    analysis.keywords = [k for k in analysis.keywords if len(k.split()) <= MAX_SKILL_WORDS]
+    return analysis
