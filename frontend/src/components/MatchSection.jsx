@@ -67,12 +67,10 @@ function MatchResult({ match }) {
         </h4>
         <div className="space-y-3">
           {match.result.components.map((c) => (
-            <div key={c.name}>
+            <div key={c.name} className={c.applicable === false ? 'opacity-50' : ''}>
               <div className="flex justify-between text-xs text-slate-300">
                 <span>{c.name}</span>
-                <span>
-                  {c.score} / {c.max_score}
-                </span>
+                <span>{c.applicable === false ? 'not counted' : `${c.score} / ${c.max_score}`}</span>
               </div>
               <div className="h-2 rounded bg-slate-700">
                 <div

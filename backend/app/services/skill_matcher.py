@@ -134,37 +134,54 @@ def compute_match(
             "name": "Required skills",
             "score": round(WEIGHTS["Required skills"] * _ratio(required), 1),
             "max_score": WEIGHTS["Required skills"],
+            "applicable": bool(required),
             "detail": f"{req_hits} of {len(required)} required skills found",
         },
         {
             "name": "Preferred skills",
             "score": round(WEIGHTS["Preferred skills"] * _ratio(preferred), 1),
             "max_score": WEIGHTS["Preferred skills"],
-            "detail": f"{pref_hits} of {len(preferred)} preferred skills found",
+            "applicable": bool(preferred),
+            "detail": (
+                f"{pref_hits} of {len(preferred)} preferred skills found"
+                if preferred
+                else "No preferred skills listed: not counted"
+            ),
         },
         {
             "name": "Keywords",
             "score": round(WEIGHTS["Keywords"] * _ratio(keywords), 1),
             "max_score": WEIGHTS["Keywords"],
-            "detail": f"{sum(k['matched'] for k in keywords)} of {len(keywords)} keywords found",
+            "applicable": bool(keywords),
+            "detail": (
+                f"{sum(k['matched'] for k in keywords)} of {len(keywords)} keywords found"
+                if keywords
+                else "No keywords extracted: not counted"
+            ),
         },
         {
             "name": "Resume structure",
             "score": round(WEIGHTS["Resume structure"] * len(sections) / 4, 1),
             "max_score": WEIGHTS["Resume structure"],
+            "applicable": True,
             "detail": f"Sections found: {', '.join(sections) or 'none'}",
         },
         {
             "name": "Resume quality",
             "score": round(WEIGHTS["Resume quality"] * resume_score / 100, 1),
             "max_score": WEIGHTS["Resume quality"],
+            "applicable": True,
             "detail": f"Resume analysis score: {resume_score}/100",
         },
     ]
 
+    counted = [c for c in components if c["applicable"]]
+    possible = sum(c["max_score"] for c in counted)
+    ats_score = round(100 * sum(c["score"] for c in counted) / possible) if possible else 0
+
     return {
         "match_percentage": match_percentage,
-        "ats_score": round(sum(c["score"] for c in components)),
+        "ats_score": ats_score,
         "result": {
             "required": required,
             "preferred": preferred,

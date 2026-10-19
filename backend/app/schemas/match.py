@@ -25,6 +25,7 @@ class ScoreComponent(BaseModel):
     score: float
     max_score: float
     detail: str
+    applicable: bool = True
 
 
 class MatchResult(BaseModel):
