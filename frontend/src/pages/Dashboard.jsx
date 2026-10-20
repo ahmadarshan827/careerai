@@ -2,6 +2,7 @@ import { useAuth } from '../auth/AuthContext'
 import ResumeSection from '../components/ResumeSection'
 import JobSection from '../components/JobSection'
 import MatchSection from '../components/MatchSection'
+import InterviewSection from '../components/InterviewSection'
 
 export default function Dashboard() {
   const { user, logout } = useAuth()
@@ -19,6 +20,7 @@ export default function Dashboard() {
       <ResumeSection />
       <JobSection />
       <MatchSection />
+      <InterviewSection />
     </div>
   )
 }

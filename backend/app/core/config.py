@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     secret_key: str
     gemini_api_key: str = ""
     gemini_model: str = "gemini-2.5-flash"
+    gemini_fallback_model: str = ""
     access_token_expire_minutes: int = 60
 
     model_config = SettingsConfigDict(

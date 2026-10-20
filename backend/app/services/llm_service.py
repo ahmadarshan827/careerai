@@ -22,10 +22,13 @@ def generate_structured(
     prompt: str,
     schema: type[BaseModel],
     system_instruction: str | None = None,
-    max_attempts: int = 3,
+    max_attempts: int = 4,
 ) -> BaseModel:
     settings = get_settings()
     client = genai.Client(api_key=settings.gemini_api_key)
+    models = [settings.gemini_model]
+    if settings.gemini_fallback_model:
+        models.append(settings.gemini_fallback_model)
     config = types.GenerateContentConfig(
         system_instruction=system_instruction,
         response_mime_type="application/json",
@@ -35,9 +38,10 @@ def generate_structured(
 
     busy = False
     for attempt in range(max_attempts):
+        model = models[attempt % len(models)]  # alternate primary and fallback
         try:
             response = client.models.generate_content(
-                model=settings.gemini_model, contents=prompt, config=config
+                model=model, contents=prompt, config=config
             )
             if isinstance(response.parsed, schema):
                 return response.parsed
